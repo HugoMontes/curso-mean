@@ -53,8 +53,43 @@ async function saveUser(req, res) {
     }
 }
 
+// Función para loguearse
+async function loginUser(req, res) {
+    try {
+        const params = req.body;
+        // Obtener los datos desde params
+        const email = params.email;
+        const password = params.password;
+
+        // Buscar un usuario con un determinado email en la base de datos
+        const user = await User.findOne({ email: email.toLowerCase() });
+        // Verificar que exista
+        if (!user) {
+            return res.status(404).send({ message: 'El usuario no existe' });
+        }
+
+        // Comprobar que contraseña enviada sea la misma que la que se tiene en BD
+        const success = await argon2.verify(user.password, password);
+        // Verificar que sean iguales las contraseñas
+        if (success) {
+            // Devolver los datos del usuario logueado
+            if (params.gethash) {
+                // Devolver un token de jwt
+                // Aquí la lógica para generar y devolver el token
+            } else {
+                return res.status(200).send({ user });
+            }
+        } else {
+            return res.status(404).send({ message: 'El usuario no ha podido loguearse' });
+        }
+    } catch (err) {
+        return res.status(500).send({ message: 'Error en la petición', error: err });
+    }
+}
+
 // Exportar los metodos en un modulo
 module.exports = {
     pruebas,
-    saveUser
+    saveUser,
+    loginUser
 }
