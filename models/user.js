@@ -3,7 +3,7 @@
 // Cargar el modulo de mongoose para acceder a la BD
 var mongoose = require('mongoose');
 // Crear una variable para definir schemas de la base de datos.
-var schema = mongoose.Schema;
+var Schema = mongoose.Schema;
 
 // Crear un schema para usuario
 var UserSchema = Schema({

@@ -9,6 +9,7 @@ var api = express.Router();
 
 // Crear la ruta y asociarlo con el metodo del controlador
 api.get('/probando-controlador', UserController.pruebas);
+api.post('/register', UserController.saveUser);
 
 // Exportar en un modulo 
 module.exports = api;
