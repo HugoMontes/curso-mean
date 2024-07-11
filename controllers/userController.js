@@ -91,9 +91,33 @@ async function loginUser(req, res) {
     }
 }
 
+// Metodo para actualizar datos de user
+async function updateUser(req, res) {
+    try {
+        // Obtener la id desde la url
+        var userId = req.params.id;
+        // Obtener el body de la peticion
+        var update = req.body;
+
+        // Actualizar los datos de usuario
+        const userUpdated = await User.findByIdAndUpdate(userId, update, { new: true });
+        // Verificar si se ha encontrado el usuario
+        if (userUpdated) {
+            // Si el usuario existe, retornar los datos del usuario modificado
+            return res.status(200).send({ user: userUpdated });
+        } else {
+            // Si el usuario NO existe en la base de datos, mostrar un mensaje de error
+            return res.status(404).send({ message: 'No se ha podido actualizar el usuario' });
+        }
+    } catch (err) {
+        return res.status(500).send({ message: 'Error al actualizar el usuario', error: err });
+    }
+}
+
 // Exportar los metodos en un modulo
 module.exports = {
     pruebas,
     saveUser,
-    loginUser
+    loginUser,
+    updateUser
 }
