@@ -4,6 +4,8 @@
 var argon2 = require('argon2');
 // Importar el modelo de usuario
 var User = require('../models/user');
+// Importar los metodos del servicio jwt
+var jwt = require('../services/jwt');
 
 // Crear metodo que retorna un mensaje
 function pruebas(req, res) {
@@ -75,7 +77,9 @@ async function loginUser(req, res) {
             // Devolver los datos del usuario logueado
             if (params.gethash) {
                 // Devolver un token de jwt
-                // Aquí la lógica para generar y devolver el token
+                res.status(200).send({
+                    token: jwt.createToken(user)
+                });
             } else {
                 return res.status(200).send({ user });
             }
