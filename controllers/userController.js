@@ -1,5 +1,9 @@
 'use strict'
 
+// Importar modulo para trabajar con sistema de ficheros
+var fs = require('fs');
+// Importar modulo para trabajar con las rutas
+var path = require('path');
 // Importar modulo para cifrar contraseñas
 var argon2 = require('argon2');
 // Importar el modelo de usuario
@@ -163,11 +167,25 @@ async function uploadImage(req, res) {
     }
 }
 
+// Metodo para obtener una imagen
+function getImageFile(req, res) {
+    var fileImage = req.params.imageFile;
+    var filePath = './uploads/users/' + fileImage;
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+        if (err) {
+            res.status(200).send({ message: 'No existe la imagen...' });
+        } else {
+            res.sendFile(path.resolve(filePath));
+        }
+    });
+}
+
 // Exportar los metodos en un modulo
 module.exports = {
     pruebas,
     saveUser,
     loginUser,
     updateUser,
-    uploadImage
+    uploadImage,
+    getImageFile
 }

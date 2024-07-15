@@ -21,6 +21,7 @@ api.post('/login', UserController.loginUser);
 api.put('/update-user/:id', md_auth.ensureAuth, UserController.updateUser);
 // Para recoger los archivos que llegan por file usar md_upload
 api.post('/upload-image-user/:id', [md_auth.ensureAuth, md_upload], UserController.uploadImage);
+api.get('/get-image-user/:imageFile', UserController.getImageFile);
 
 // Exportar en un modulo 
 module.exports = api;
