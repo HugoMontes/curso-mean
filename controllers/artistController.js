@@ -9,8 +9,21 @@ var Album = require('../models/album');
 var Song = require('../models/song');
 
 // Metodo para obtener un artista de la BD
-function getArtist(req, res) {
-    res.status(200).send({ message: 'Metodo getArtist del controlador artist.js' });
+async function getArtist(req, res) {
+    try {
+        // Recoger el parametro id de artista que llega por URL 
+        var artistId = req.params.id;
+        // Buscar el artista por su id
+        const artist = await Artist.findById(artistId);
+        if(!artist){
+            return res.status(404).send({ message: 'El artista no existe' });
+        }else{
+            return res.status(200).send({ artist });
+        }
+        res.status(200).send({ message: 'Metodo getArtist del controlador artist.js' });
+    } catch(err){
+        return res.status(500).send({ message: 'Error en la peticion buscar artista', error: err });
+    }
 }
 
 // Metodo para guardar un artista
