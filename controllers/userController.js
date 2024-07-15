@@ -114,10 +114,60 @@ async function updateUser(req, res) {
     }
 }
 
+// Metodo para subir archivos
+async function uploadImage(req, res) {
+    try {
+        // Recibimos un userId como parametro de la url
+        var userId = req.params.id;
+        // Adicionamos un nombre por defecto del archivo
+        var file_name = 'No subido...';
+        // Comprobar si vienen files
+        if (req.files) {
+            // Obtener el path del archivo a subir
+            var file_path = req.files.image.path;
+            // Mostar por consola la ruta del archivo
+            // console.log(file_path);
+            // return res.status(200).send({ message: 'La imagen se ha subido' });
+
+            // Obtener el nombre de la imagen
+            var file_split = file_path.split('\\');
+            var file_name = file_split[2];
+
+            // Obtener la extension del archivo
+            var ext_split = file_name.split('\.');
+            var file_ext = ext_split[1];
+
+            // Verificar si el archivo tiene la extension correcta
+            if (file_ext == 'png' || file_ext == 'jpg' || file_ext == 'gif') {
+                // Subir la imagen
+                const userUpdated = await User.findByIdAndUpdate(userId, { image: file_name });
+                if (userUpdated) {
+                    // Si el usuario existe, retornar los datos del usuario modificado
+                    return res.status(200).send({ user: userUpdated });
+                } else {
+                    // Si el usuario NO existe en la base de datos, mostrar un mensaje de error
+                    return res.status(404).send({ message: 'No se ha podido actualizar el usuario' });
+                }
+            } else {
+                // Mandar mensaje
+                res.status(401).send({ message: 'Extension del arvhivo no valida.' });
+            }
+
+            res.status(200).send({ message: 'La imagen se ha subido.' });
+        } else {
+            // En caso que no existan archivos
+            res.status(200).send({ message: 'No has subido ninguna imagen...' });
+        }
+    } catch (err) {
+        return res.status(500).send({ message: 'Error al actualizar el usuario', error: err });
+    }
+}
+
 // Exportar los metodos en un modulo
 module.exports = {
     pruebas,
     saveUser,
     loginUser,
-    updateUser
+    updateUser,
+    uploadImage
 }
