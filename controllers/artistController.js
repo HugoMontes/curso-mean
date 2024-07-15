@@ -15,13 +15,12 @@ async function getArtist(req, res) {
         var artistId = req.params.id;
         // Buscar el artista por su id
         const artist = await Artist.findById(artistId);
-        if(!artist){
+        if (!artist) {
             return res.status(404).send({ message: 'El artista no existe' });
-        }else{
+        } else {
             return res.status(200).send({ artist });
         }
-        res.status(200).send({ message: 'Metodo getArtist del controlador artist.js' });
-    } catch(err){
+    } catch (err) {
         return res.status(500).send({ message: 'Error en la peticion buscar artista', error: err });
     }
 }
