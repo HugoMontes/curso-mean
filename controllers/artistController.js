@@ -131,10 +131,71 @@ async function deleteArtist(req, res) {
     }
 }
 
+// Metodo para subir archivos
+async function uploadImage(req, res) {
+    try {
+        // Recibimos un artistId como parametro de la url
+        var artistId = req.params.id;
+        // Adicionamos un nombre por defecto del archivo
+        var file_name = 'No subido...';
+        // Comprobar si vienen files
+        if (req.files) {
+            // Obtener el path del archivo a subir
+            var file_path = req.files.image.path;
+
+            // Obtener el nombre de la imagen
+            var file_split = file_path.split('\\');
+            var file_name = file_split[2];
+
+            // Obtener la extension del archivo
+            var ext_split = file_name.split('\.');
+            var file_ext = ext_split[1];
+
+            // Verificar si el archivo tiene la extension correcta
+            if (file_ext == 'png' || file_ext == 'jpg' || file_ext == 'gif') {
+                // Subir la imagen
+                const artistUpdated = await Artist.findByIdAndUpdate(artistId, { image: file_name });
+                if (artistUpdated) {
+                    // Si el artista existe, retornar los datos del artista modificado
+                    return res.status(200).send({ artist: artistUpdated });
+                } else {
+                    // Si el artista NO existe en la base de datos, mostrar un mensaje de error
+                    return res.status(404).send({ message: 'No se ha podido actualizar el artista' });
+                }
+            } else {
+                // Mandar mensaje
+                res.status(401).send({ message: 'Extension del arvhivo no valida.' });
+            }
+
+            res.status(200).send({ message: 'La imagen se ha subido.' });
+        } else {
+            // En caso que no existan archivos
+            res.status(200).send({ message: 'No has subido ninguna imagen...' });
+        }
+    } catch (err) {
+        return res.status(500).send({ message: 'Error al actualizar el artista', error: err });
+    }
+}
+
+// Metodo para obtener una imagen
+function getImageFile(req, res) {
+    var fileImage = req.params.imageFile;
+    var filePath = './uploads/artists/' + fileImage;
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+        if (err) {
+            res.status(200).send({ message: 'No existe la imagen...' });
+        } else {
+            res.sendFile(path.resolve(filePath));
+        }
+    });
+}
+
 module.exports = {
     getArtist,
     saveArtist,
     getArtists,
     updateArtist,
-    deleteArtist
+    deleteArtist,
+    uploadImage,
+    getImageFile
 }
