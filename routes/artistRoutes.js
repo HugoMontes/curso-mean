@@ -9,6 +9,8 @@ var md_auth = require('../middlewares/authenticated');
 // Crear la ruta y asociarlo con el metodo del controlador
 api.get('/artist/:id', md_auth.ensureAuth, ArtistController.getArtist);
 api.post('/artist', md_auth.ensureAuth, ArtistController.saveArtist);
+// Crear ruta con parametro page opcional
+api.get('/artists/:page?', md_auth.ensureAuth, ArtistController.getArtists);
 
 // Exportar metodos del API
 module.exports = api;

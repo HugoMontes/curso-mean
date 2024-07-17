@@ -3,6 +3,9 @@
 // Importar modulos necesarios
 var path = require('path');
 var fs = require('fs');
+// Importar modulo de paginacion
+var mongoosePaginate = require('mongoose-pagination-v2');
+
 // Importar modelos a usar
 var Artist = require('../models/artist');
 var Album = require('../models/album');
@@ -22,6 +25,35 @@ async function getArtist(req, res) {
         }
     } catch (err) {
         return res.status(500).send({ message: 'Error en la peticion buscar artista', error: err });
+    }
+}
+
+// Metodo para obtener artistas paginados
+async function getArtists(req, res) {
+    // Inicializamos los parametros de la paginacion
+    // Obtener parametro de page en caso que exista
+    var page = parseInt(req.params.page) || 1;
+    var itemsPerPage = 3;
+    try {
+        var options = {
+            page: page,
+            limit: itemsPerPage,
+            sort: { name: 1 } // Ordenar por nombre de manera ascendente
+        };
+        // Obtener todos los artistas ordenados por nombre y paginados
+        var result = await Artist.paginate({}, options);
+        var artists = result.docs;
+        var total = result.totalDocs;
+        if (!artists || artists.length === 0) {
+            return res.status(404).send({ message: 'No hay artistas' });
+        } else {
+            return res.status(200).send({
+                total_items: total,
+                artists: artists
+            });
+        }
+    } catch (err) {
+        return res.status(500).send({ message: 'Error en la peticion' });
     }
 }
 
@@ -50,5 +82,6 @@ async function saveArtist(req, res) {
 
 module.exports = {
     getArtist,
-    saveArtist
+    saveArtist,
+    getArtists
 }
