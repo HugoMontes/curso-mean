@@ -80,8 +80,31 @@ async function saveArtist(req, res) {
     }
 }
 
+// Metodo para actualizar artista
+async function updateArtist(req, res) {
+    // Obtener del parametro de la url el id del artista
+    var artistId = req.params.id;
+    // Obtener los datos del body por post
+    var update = req.body;
+    try {
+        // Actualizar datos de artista
+        const artistUpdated = await Artist.findByIdAndUpdate(artistId, update, { new: true });
+        // Verificar si se ha encontrado y actualizado el documento del artista
+        if (artistUpdated) {
+            // Si el registro existe, retornar los datos del registro modificado
+            return res.status(200).send({ user: artistUpdated });
+        } else {
+            // Si el registro NO existe en la base de datos, mostrar un mensaje de error
+            return res.status(404).send({ message: 'No se ha podido actualizar el artista' });
+        }
+    } catch (err) {
+        return res.status(500).send({ message: 'Error al actualizar el usuario', error: err });
+    }
+}
+
 module.exports = {
     getArtist,
     saveArtist,
-    getArtists
+    getArtists,
+    updateArtist
 }
