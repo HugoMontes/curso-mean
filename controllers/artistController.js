@@ -102,9 +102,39 @@ async function updateArtist(req, res) {
     }
 }
 
+// Metodo para eliminar un artista, albums y canciones
+async function deleteArtist(req, res) {
+    // Obtener del parametro de la url el id del artista
+    var artistId = req.params.id;
+    try {
+        // Eliminar el documento de artista
+        const artistRemoved = await Artist.findByIdAndDelete(artistId);
+        if (!artistRemoved) {
+            return res.status(404).send({ message: 'No se ha podido eliminar el artista' });
+        }
+        // En este punto se podria probar si elimina unicamente el artista
+        // return res.status(200).send({ artist: artistRemoved });
+
+        // Eliminar todos los albums asociados al artista
+        const albumsRemoved = await Album.deleteMany({ artist: artistRemoved._id });
+
+        // Eliminar las canciones asociadas a los álbumes eliminados
+        if (albumsRemoved.deletedCount > 0) {
+            await Song.deleteMany({ album: { $in: albumsRemoved.deletedCount } });
+        }
+
+        // Retornar datos del artista eliminado
+        return res.status(200).send({ artist: artistRemoved });
+
+    } catch (err) {
+        return res.status(500).send({ message: 'Error al eliminar artista', error: err });
+    }
+}
+
 module.exports = {
     getArtist,
     saveArtist,
     getArtists,
-    updateArtist
+    updateArtist,
+    deleteArtist
 }
