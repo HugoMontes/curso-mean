@@ -29,6 +29,30 @@ function getAlbum(req, res) {
         });
 }
 
+// Metodo para obtener varios albums
+function getAlbums(req, res) {
+    var artistId = req.params.artist;
+    if (!artistId) {
+        // Sacar todos los albums de la db
+        var find = Album.find({}).sort('title');
+    } else {
+        // Sacar los albums de un artista concreto de la db
+        var find = Album.find({ artist: artistId }).sort('year');
+    }
+    // Con populate y path sustituimos artist por un objeto con datos del artista
+    find.populate({ path: 'artist' }).exec()
+        .then(albums => {
+            if (!albums) {
+                res.status(404).send({ message: 'No hay albums' })
+            } else {
+                res.status(200).send({ albums })
+            }
+        })
+        .catch(err => {
+            return res.status(500).send({ message: 'Error en la peticion', error: err });
+        });
+}
+
 // Metodo para guardar un album
 async function saveAlbum(req, res) {
     try {
@@ -57,5 +81,6 @@ async function saveAlbum(req, res) {
 // Exportar metodos
 module.exports = {
     getAlbum,
-    saveAlbum
+    saveAlbum,
+    getAlbums
 };

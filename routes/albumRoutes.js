@@ -11,6 +11,8 @@ var md_upload = multipart({ uploadDir: './uploads/artists' });
 // Crear la ruta y asociarlo con el metodo del controlador
 api.get('/album/:id', md_auth.ensureAuth, AlbumController.getAlbum);
 api.post('/album', md_auth.ensureAuth, AlbumController.saveAlbum);
+// Agregamos :artist como parametro opcional para enviar el id de artista
+api.get('/albums/:artist?', md_auth.ensureAuth, AlbumController.getAlbums);
 
 // Exportar metodos de rutas
 module.exports = api;
