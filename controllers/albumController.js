@@ -12,7 +12,21 @@ var Song = require('../models/song');
 
 // Metodo para obtener un artista de la BD
 function getAlbum(req, res) {
-    return res.status(200).send({ message: 'Accion getAlbum' });
+    var albumId = req.params.id;
+
+    // Usando populate cargar los datos de artist asociados al ID de artista
+    // Usando exec y promesas
+    Album.findById(albumId).populate({ path: 'artist' }).exec()
+        .then(album => {
+            if (!album) {
+                res.status(404).send({ message: 'El albumn no existe' })
+            } else {
+                res.status(200).send({ album })
+            }
+        })
+        .catch(err => {
+            return res.status(500).send({ message: 'Error en el servidor al obtener album', error: err });
+        });
 }
 
 // Metodo para guardar un album
