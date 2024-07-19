@@ -15,7 +15,33 @@ function getAlbum(req, res) {
     return res.status(200).send({ message: 'Accion getAlbum' });
 }
 
-// Exportar
+// Metodo para guardar un album
+async function saveAlbum(req, res) {
+    try {
+        var album = new Album();
+        var params = req.body;
+        album.title = params.title;
+        album.description = params.description;
+        album.year = params.year;
+        album.image = null;
+        album.artist = params.artist;
+
+        const albumStored = await album.save();
+        if (!albumStored) {
+            return res.status(400).send({ message: 'No se ha guardado el album' });
+        }
+        return res.status(200).send({
+            message: 'Datos guardados correctamente.',
+            album: albumStored
+        });
+
+    } catch (err) {
+        return res.status(500).send({ message: 'Error en el servidor al registrar album' });
+    }
+}
+
+// Exportar metodos
 module.exports = {
-    getAlbum
+    getAlbum,
+    saveAlbum
 };
