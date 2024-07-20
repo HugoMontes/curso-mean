@@ -78,9 +78,30 @@ async function saveAlbum(req, res) {
     }
 }
 
+// Metodo para actualizar un album
+async function updateAlbum(req, res) {
+    // Obtener del parametros
+    var albumId = req.params.id;
+    // Obtener los datos del body por post
+    var update = req.body;
+    try {
+        // Actualizar datos del album
+        const albumUpdated = await Album.findByIdAndUpdate(albumId, update, { new: true });
+        // Verificar si se ha encontrado y actualizado el documento del album
+        if (albumUpdated) {
+            return res.status(200).send({ album: albumUpdated });
+        } else {
+            return res.status(404).send({ message: 'No se ha actualizado el album' });
+        }
+    } catch (err) {
+        return res.status(500).send({ message: 'Error al actualizar album', error: err });
+    }
+}
+
 // Exportar metodos
 module.exports = {
     getAlbum,
     saveAlbum,
-    getAlbums
+    getAlbums,
+    updateAlbum
 };
