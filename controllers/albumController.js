@@ -98,10 +98,34 @@ async function updateAlbum(req, res) {
     }
 }
 
+// Metodo para eliminar album
+async function deleteAlbum(req, res) {
+    // Obtener el id del album a eliminar por parametro de la url
+    var albumId = req.params.id;
+    try {
+        // Eliminar el album mediante su id
+        const albumRemoved = await Album.findByIdAndDelete(albumId);
+
+        // Si no se encuentra el álbum, retornar error 404
+        if (!albumRemoved) {
+            return res.status(404).send({ message: 'El album no existe' });
+        }
+
+        // Eliminar las canciones asociadas al album
+        await Song.deleteMany({ album: albumRemoved._id });
+
+        // Retornar datos del album eliminado
+        return res.status(200).send({ album: albumRemoved });
+    } catch (err) {
+        return res.status(500).send({ message: 'Error al eliminar album', error: err });
+    }
+}
+
 // Exportar metodos
 module.exports = {
     getAlbum,
     saveAlbum,
     getAlbums,
-    updateAlbum
+    updateAlbum,
+    deleteAlbum
 };

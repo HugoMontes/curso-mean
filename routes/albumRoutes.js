@@ -15,6 +15,7 @@ api.post('/album', md_auth.ensureAuth, AlbumController.saveAlbum);
 api.get('/albums/:artist?', md_auth.ensureAuth, AlbumController.getAlbums);
 // Agregamos id como parametro obligatorio
 api.put('/album/:id', md_auth.ensureAuth, AlbumController.updateAlbum);
+api.delete('/album/:id', md_auth.ensureAuth, AlbumController.deleteAlbum);
 
 // Exportar metodos de rutas
 module.exports = api;
