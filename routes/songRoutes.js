@@ -11,6 +11,7 @@ var md_upload = multipart({ uploadDir: './uploads/songs' });
 
 // Crear la ruta y asociarlo con el metodo del controlador
 api.get('/song', md_auth.ensureAuth, SongController.getSong);
+api.post('/song', md_auth.ensureAuth, SongController.saveSong);
 
 // Exportar metodos de rutas
 module.exports = api;
