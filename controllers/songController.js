@@ -85,9 +85,31 @@ async function saveSong(req, res) {
     }
 }
 
+// Metodo para actualizar cancion
+async function updateSong(req, res) {
+    // Obtener del parametros
+    var songId = req.params.id;
+    // Obtener los datos del body por put
+    var update = req.body;
+
+    try {
+        // Actualizar datos de la cancion
+        const songUpdated = await Song.findByIdAndUpdate(songId, update, { new: true });
+        // Verificar si se ha encontrado y actualizado el documento de la cancion
+        if (songUpdated) {
+            return res.status(200).send({ song: songUpdated });
+        } else {
+            return res.status(404).send({ message: 'No se ha actualizado la cancion' });
+        }
+    } catch (err) {
+        return res.status(500).send({ message: 'Error al actualizar cancion', error: err });
+    }
+}
+
 // Exportar metodos
 module.exports = {
     getSong,
     saveSong,
-    getSongs
+    getSongs,
+    updateSong
 }
