@@ -10,9 +10,21 @@ var Artist = require('../models/artist');
 var Album = require('../models/album');
 var Song = require('../models/song');
 
-// Crer un metodo de prueba
+// Obtener una cancion y album
 function getSong(req, res) {
-    res.status(200).send({ message: 'Controlador cancion' });
+    var songId = req.params.id;
+    // Usar populate para obtener datos del album asociado
+    Song.findById(songId).populate({ path: 'album' }).exec()
+        .then(song => {
+            if (!song) {
+                res.status(404).send({ message: 'La cancion no existe' })
+            } else {
+                res.status(200).send({ song })
+            }
+        })
+        .catch(err => {
+            return res.status(500).send({ message: 'Error en el servidor al obtener cancion', error: err });
+        });
 }
 
 // Metodo para guardar cancion
