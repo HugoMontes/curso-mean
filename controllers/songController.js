@@ -27,6 +27,40 @@ function getSong(req, res) {
         });
 }
 
+// Metodo para obtener canciones
+function getSongs(req, res) {
+    // Obtener mediante la URL el ID de algun album 
+    var albumId = req.params.album;
+    // Verificar si se envio albumId
+    if (!albumId) {
+        // Obtener todas las canciones de la BD
+        var find = Song.find({}).sort('number');
+    } else {
+        // Obtener las canciones de un album especifico
+        var find = Song.find({ album: albumId }).sort('number');
+    }
+
+    find.populate({
+        // Populamos el album de cada cancion 
+        path: 'album',
+        // Tambien podriamos prepopular los datos de artistas
+        populate: {
+            path: 'artist',
+            model: 'Artist'
+        }
+    }).exec()
+        .then(songs => {
+            if (!songs) {
+                res.status(404).send({ message: 'No hay canciones' })
+            } else {
+                res.status(200).send({ songs })
+            }
+        })
+        .catch(err => {
+            return res.status(500).send({ message: 'Error en la peticion', error: err });
+        });
+}
+
 // Metodo para guardar cancion
 async function saveSong(req, res) {
     var song = new Song();
@@ -54,5 +88,6 @@ async function saveSong(req, res) {
 // Exportar metodos
 module.exports = {
     getSong,
-    saveSong
+    saveSong,
+    getSongs
 }
