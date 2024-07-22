@@ -106,10 +106,31 @@ async function updateSong(req, res) {
     }
 }
 
+// Metodo para eliminar una cancion
+async function deleteSong(req, res) {
+    // Obtener el id de la cancion a eliminar
+    var songId = req.params.id;
+    try {
+        // Eliminar el song mediante su id
+        const songRemoved = await Song.findByIdAndDelete(songId);
+
+        // Si no se encuentra la cancion, retornar error 404
+        if (!songRemoved) {
+            return res.status(404).send({ message: 'La cancion no existe' });
+        }
+
+        // Retornar datos del song eliminado
+        return res.status(200).send({ song: songRemoved });
+    } catch (err) {
+        return res.status(500).send({ message: 'Error al eliminar cancion', error: err });
+    }
+}
+
 // Exportar metodos
 module.exports = {
     getSong,
     saveSong,
     getSongs,
-    updateSong
+    updateSong,
+    deleteSong
 }

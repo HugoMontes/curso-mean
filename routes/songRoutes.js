@@ -15,6 +15,7 @@ api.post('/song', md_auth.ensureAuth, SongController.saveSong);
 // Agregamos un parametro opcional :album?
 api.get('/songs/:album?', md_auth.ensureAuth, SongController.getSongs);
 api.put('/song/:id', md_auth.ensureAuth, SongController.updateSong);
+api.delete('/song/:id', md_auth.ensureAuth, SongController.deleteSong);
 
 // Exportar metodos de rutas
 module.exports = api;
