@@ -126,11 +126,72 @@ async function deleteSong(req, res) {
     }
 }
 
+// Metodo para subir archivos
+async function uploadFile(req, res) {
+    try {
+        // Recibimos el id de una cancion como parametro de la url
+        var songId = req.params.id;
+        // Adicionamos un nombre por defecto del archivo
+        var file_name = 'No subido...';
+        // Comprobar si vienen files
+        if (req.files) {
+            // Obtener el path del archivo a subir
+            var file_path = req.files.file.path;
+
+            // Obtener el nombre de la imagen
+            var file_split = file_path.split('\\');
+            var file_name = file_split[2];
+
+            // Obtener la extension del archivo
+            var ext_split = file_name.split('\.');
+            var file_ext = ext_split[1];
+
+            // Verificar si el archivo tiene la extension correcta
+            if (file_ext == 'mp3' || file_ext == 'ogg') {
+                // Subir la imagen
+                const songUpdated = await Song.findByIdAndUpdate(songId, { file: file_name });
+                if (songUpdated) {
+                    // Si la cancion existe, retornar los datos de la cancion modificado
+                    return res.status(200).send({ song: songUpdated });
+                } else {
+                    // Si la cancion NO existe en la base de datos, mostrar un mensaje de error
+                    return res.status(404).send({ message: 'No se ha podido actualizar la cancion' });
+                }
+            } else {
+                // Mandar mensaje
+                res.status(401).send({ message: 'Extension del archivo no valida.' });
+            }
+
+            res.status(200).send({ message: 'El archivo se ha subido.' });
+        } else {
+            // En caso que no existan archivos
+            res.status(200).send({ message: 'No has subido ningun archivo...' });
+        }
+    } catch (err) {
+        return res.status(500).send({ message: 'Error al actualizar archivo de audio', error: err });
+    }
+}
+
+// Metodo para obtener una imagen
+function getSongFile(req, res) {
+    var fileSong = req.params.songFile;
+    var filePath = './uploads/songs/' + fileSong;
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+        if (err) {
+            res.status(200).send({ message: 'No existe el archivo...' });
+        } else {
+            res.sendFile(path.resolve(filePath));
+        }
+    });
+}
+
 // Exportar metodos
 module.exports = {
     getSong,
     saveSong,
     getSongs,
     updateSong,
-    deleteSong
+    deleteSong,
+    uploadFile,
+    getSongFile
 }
