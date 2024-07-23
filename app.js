@@ -15,7 +15,20 @@ var song_routes = require('./routes/songRoutes');
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-// Configurar cabeceras http
+// Configurar cabeceras http para evitar problemas con el control de acceso
+// Configurar un middleware que se ejecute en cada solicitud que reciba el servidor
+app.use((req, res, next) => {
+    // Permitir solicitudes desde cualquier origen.
+    res.header('Access-Control-Allow-Origin', '*');
+    //  Define las cabeceras que pueden ser utilizadas durante la solicitud HTTP como Authorization, Content-Type, etc.
+    res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
+    // Especifica los métodos HTTP que están permitidos al hacer solicitudes al servidor.
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+    // Similar a la línea anterior, esta cabecera indica los métodos HTTP que el servidor acepta.
+    res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
+    // Pasar el control al siguiente middleware en la cadena de middlewares de Express.js
+    next();
+});
 
 // Configurar rutas base
 // Agregar /api por delante de la ruta y cargar el archivo de ruta de user 
