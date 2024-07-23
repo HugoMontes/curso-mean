@@ -147,7 +147,10 @@ async function uploadImage(req, res) {
                 const userUpdated = await User.findByIdAndUpdate(userId, { image: file_name });
                 if (userUpdated) {
                     // Si el usuario existe, retornar los datos del usuario modificado
-                    return res.status(200).send({ user: userUpdated });
+                    return res.status(200).send({
+                        image: file_name,
+                        user: userUpdated
+                    });
                 } else {
                     // Si el usuario NO existe en la base de datos, mostrar un mensaje de error
                     return res.status(404).send({ message: 'No se ha podido actualizar el usuario' });
